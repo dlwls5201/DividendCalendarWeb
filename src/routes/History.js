@@ -65,7 +65,7 @@ const History = () => {
     >
       <div tw={ 'text-4xl font-bold' }>Dividend Calendar History</div>
 
-      <h1 className="text-blue-400">Hello World!</h1>
+      <h1 className="text-blue-400">BlackJin World</h1>
 
       <select
         style={ {backgroundColor: 'transparent'} }
