@@ -1,61 +1,56 @@
 import React, { useEffect, useState } from 'react'
-import { collection, getDocs, query, where, orderBy } from 'firebase/firestore'
+import { collection, getDocs, orderBy, query } from 'firebase/firestore'
 import { firestore } from 'DWFirebase'
-import { HistoryTypeList } from 'constant/HistoryType'
-import HistoryItem from 'components/HistoryItem'
+import OrderBy from 'constant/OrderBy'
+import { useHistory } from 'react-router-dom'
+import UserAnalysis from 'components/UserAnalysis'
+import UserItem from 'components/UserItem'
 
 const History = () => {
+  const history = useHistory()
+
   const [userList, setUserList] = useState([])
-  const [historyList, setHistoryList] = useState([])
-  const [filteredHistoryList, setFilteredHistoryList] = useState([])
+  const [createdAtOrder, setCreatedAtOrder] = useState(OrderBy.DESC)
 
   useEffect(async () => {
-    const usersSnapshot = await getDocs(collection(firestore, 'users'))
+    const usersRef = collection(firestore, 'users')
+    const usersQuery = query(usersRef, orderBy('created_at', 'desc'))
+    const usersSnapshot = await getDocs(usersQuery)
+
+    //const usersSnapshot = await getDocs(collection(firestore, 'users'))
     const users = usersSnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data()
     }))
     setUserList(users)
-
-    const historyRef = collection(firestore, 'history')
-    //const historyQuery = query(historyRef, where('type', '==', 'DIVIDEND_GOAL'))
-    const historyQuery = query(historyRef, orderBy("created_at", "desc"));
-    const historySnapshot = await getDocs(historyQuery)
-    const histories = historySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data()
-    }))
-    setHistoryList(histories)
   }, [])
 
-  const onSelectType = (event) => {
-    const {target: {value}} = event
-    filterHistoryByType(value)
-  }
-
-  function filterHistoryByType(type) {
-    const table = document.getElementById('historyTable')
-    const trs = table.getElementsByTagName('tr')
-
-    for (let i = 0; i < trs.length; i++) {
-      const tdType = trs[i].getElementsByTagName('td')[0]
-      if(tdType) {
-        const tdTypeText = tdType.textContent || tdType.innerText
-        if(tdTypeText.indexOf(type) > -1) {
-          trs[i].style.display = ''
-        } else {
-          trs[i].style.display = 'none'
-        }
-      }
+  const onClickChangeCreatedAt = () => {
+    if (createdAtOrder === OrderBy.ASC) {
+      setUserListOrderByCreatedAtDESC()
+    } else {
+      setUserListOrderByCreatedAtASC()
     }
   }
 
-  const onSelectUser = (event) => {
-    const {target: {value}} = event
-    const filteredList = historyList.filter( history => {
-      return history.userId === value
+  const setUserListOrderByCreatedAtDESC = () => {
+    setCreatedAtOrder(OrderBy.DESC)
+    const sortingUserList = userList.sort(function (a, b) {
+      return b.created_at - a.created_at
     })
-    setFilteredHistoryList(filteredList)
+    setUserList(sortingUserList)
+  }
+
+  const setUserListOrderByCreatedAtASC = () => {
+    setCreatedAtOrder(OrderBy.ASC)
+    const sortingUserList = userList.sort(function (a, b) {
+      return a.created_at - b.created_at
+    })
+    setUserList(sortingUserList)
+  }
+
+  const goToStockRanking = () => {
+    history.push('/stock/ranking')
   }
 
   return (
@@ -63,44 +58,52 @@ const History = () => {
       style={ {background: 'rgb(255,255,255)'} }
       className={ 'px-5 py-5 w-full h-full text-lg' }
     >
-      <div tw={ 'text-4xl font-bold' }>Dividend Calendar History</div>
+      <div className={ 'text-3xl' }>Dividend Calendar History</div>
 
-      <h1 className="text-blue-400">BlackJin World</h1>
-
-      <select
-        style={ {backgroundColor: 'transparent'} }
-        className={ 'mt-10'}
-        onChange={ onSelectUser }
+      <div
+        className={ 'hover:bg-gray-200 mt-8 px-4 py-2 rounded-lg border-solid border-2 border-black' }
+        style={ {display: 'inline-block', cursor: 'pointer'} }
+        onClick={ goToStockRanking }
       >
-        <option value="" selected="selected">User</option>
-        { userList.map((user) => <option value={ user.uid }>{ user.name }</option>) }
-      </select>
+        Stock Ranking 👑
+      </div>
+
+      <UserAnalysis userList={ userList } />
+
+      <h1 className={ 'mt-4 text-gray-600' }>Profile 탭을 누르면 User 상세로 이동합니다.</h1>
 
       <table
-        id='historyTable'
-        className={ 'table-fixed w-full border-collapse border border-black mt-4' }
+        className={ 'table-fixed w-full border-collapse border border-black mt-2' }
       >
         <thead>
         <tr className="bg-blue-200">
-          <th>
-            <select
-              style={ {backgroundColor: 'transparent'} }
-              onChange={ onSelectType }
-            >
-              <option value="" selected="selected">Type</option>
-              { HistoryTypeList.map((type) => <option value={ type.name }>{ type.value }</option>) }
-            </select>
+          <th style={ {width: 50} }>No</th>
+          <th>Profile</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th
+            style={ {cursor: 'pointer'} }
+            onClick={ onClickChangeCreatedAt }
+          >
+            { 'CreatedAt ' + ((createdAtOrder === OrderBy.ASC) ? '↓' : '↑') }
           </th>
-          <th>Ticker</th>
-          <th>Count</th>
-          <th>Goal</th>
-          <th>CreatedAt</th>
         </tr>
         </thead>
+
         <tbody>
-        { filteredHistoryList.map((history) => <HistoryItem history={ history } />) }
+        { userList.map((user, index) => <UserItem index={ index } user={ user } />) }
         </tbody>
       </table>
+
+      {/*<select
+       style={ {backgroundColor: 'transparent'} }
+       className={ 'mt-10' }
+       onChange={ onSelectUser }
+       >
+       <option value="" selected="selected">User</option>
+       { userList.map((user) => <option value={ user.uid }>{ user.name }</option>) }
+       </select>*/ }
+
     </div>
   )
 }

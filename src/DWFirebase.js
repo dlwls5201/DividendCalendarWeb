@@ -16,6 +16,3 @@ const firebase = initializeApp(firebaseConfig)
 export const firebaseInstance = firebase
 export const firestore = getFirestore()
 
-export const initFirebase = () => {
-  console.log('initFirebase')
-}
