@@ -18,7 +18,7 @@ const UserItem = ({index, user}) => {
   }, [])
 
   const goToUserHistory = () => {
-    history.push({pathname: '/user', state: user})
+    history.push({pathname: '/user/detail', state: user})
   }
 
   return (

@@ -3,21 +3,29 @@ import { collection, getDocs } from 'firebase/firestore'
 import { firestore } from 'DWFirebase'
 import OrderBy from 'constant/OrderBy'
 import RankingItem from 'components/RankingItem'
+import { checkAdmin } from 'constant/CheckAdmin'
 
-const StockRanking = () => {
+const StockRanking = ({userObj}) => {
 
   const [rankingList, setRankingList] = useState([])
-  const [countOrder, setCountOrder] = useState(OrderBy.DESC)
-  const [userNumberOrder, setUserNumberOrder] = useState(OrderBy.DESC)
+  const [countOrder, setCountOrder] = useState(OrderBy.ASC)
+  const [userNumberOrder, setUserNumberOrder] = useState(OrderBy.ASC)
   const [focusOrder, setFocusOrder] = useState('')
 
+  const [isShowError, setIsShowError] = useState(false)
+
   useEffect(async () => {
-    const stocksSnapshot = await getDocs(collection(firestore, 'stocks'))
-    const stocks = stocksSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data()
-    }))
-    processingData(stocks)
+    if (checkAdmin(userObj.email)) {
+      const stocksSnapshot = await getDocs(collection(firestore, 'stocks'))
+      const stocks = stocksSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data()
+      }))
+      processingData(stocks)
+      setIsShowError(false)
+    } else {
+      setIsShowError(true)
+    }
   }, [])
 
   const processingData = (stocks) => {
@@ -81,6 +89,10 @@ const StockRanking = () => {
   }
 
   return (
+    isShowError ?
+    <div>
+      잘못된 경로 입니다.
+    </div> :
     <div
       className={ 'px-4 py-4' }
       style={ {display: 'flex', flexDirection: 'column'} }
