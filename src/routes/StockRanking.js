@@ -11,22 +11,46 @@ const StockRanking = ({userObj}) => {
   const [countOrder, setCountOrder] = useState(OrderBy.ASC)
   const [userNumberOrder, setUserNumberOrder] = useState(OrderBy.ASC)
   const [focusOrder, setFocusOrder] = useState('')
+  const [isCachingData, setIsCachingData] = useState('')
 
   const [isShowError, setIsShowError] = useState(false)
 
-  useEffect(async () => {
+  useEffect(() => {
     if (checkAdmin(userObj.email)) {
-      const stocksSnapshot = await getDocs(collection(firestore, 'stocks'))
-      const stocks = stocksSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data()
-      }))
-      processingData(stocks)
       setIsShowError(false)
+
+      const currentTime = Date.now()
+      const localStocks = localStorage.getItem('stocks')
+      const localCacheTime = localStorage.getItem('stocks_time')
+
+      const OneDayUnixTime = 86400000
+      if (currentTime - JSON.parse(localCacheTime) < OneDayUnixTime && localStocks != null) {
+        const list = JSON.parse(localStocks)
+        processingData(list)
+        setIsCachingData('[Cache]')
+      } else {
+        setIsCachingData('')
+        loadRanking().then(r => console.log(r))
+      }
     } else {
       setIsShowError(true)
     }
   }, [])
+
+  const loadRanking = async () => {
+    const stocksSnapshot = await getDocs(collection(firestore, 'stocks'))
+    const stocks = stocksSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+
+    processingData(stocks)
+
+    localStorage.setItem('stocks', JSON.stringify(stocks))
+
+    const currentTime = Date.now()
+    localStorage.setItem('stocks_time', JSON.stringify(currentTime))
+  }
 
   const processingData = (stocks) => {
     const tempMap = new Map()
@@ -97,7 +121,7 @@ const StockRanking = ({userObj}) => {
       className={ 'px-4 py-4' }
       style={ {display: 'flex', flexDirection: 'column'} }
     >
-      <p className={ 'mt-8 text-2xl font-bold' }>Stock Ranking 👑</p>
+      <p className={ 'mt-8 text-2xl font-bold' }>{ 'Stock Ranking 👑 ' + isCachingData }</p>
 
       <p
         className={ 'mt-8 text-gray-600' }

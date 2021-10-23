@@ -1,7 +1,7 @@
 import { HashRouter as Router, Route, Switch } from 'react-router-dom'
 import Auth from 'routes/Auth'
-import UserHistory from 'routes/History'
-import UserDetailHistory from 'routes/UserHistory'
+import UserHistory from 'routes/UserHistory'
+import UserDetailHistory from 'routes/UserDetailHistory'
 import StockRanking from 'routes/StockRanking'
 
 const AppRouter = ({isAdmin, userObj}) => {
