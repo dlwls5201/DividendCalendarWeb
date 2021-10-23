@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/DividendCalendarWeb/static/css/main.9c4fd8a2.chunk.css",
-    "main.js": "/DividendCalendarWeb/static/js/main.3afc0b48.chunk.js",
-    "main.js.map": "/DividendCalendarWeb/static/js/main.3afc0b48.chunk.js.map",
+    "main.js": "/DividendCalendarWeb/static/js/main.76099d08.chunk.js",
+    "main.js.map": "/DividendCalendarWeb/static/js/main.76099d08.chunk.js.map",
     "runtime-main.js": "/DividendCalendarWeb/static/js/runtime-main.2ba1f74f.js",
     "runtime-main.js.map": "/DividendCalendarWeb/static/js/runtime-main.2ba1f74f.js.map",
-    "static/js/2.fc62ac52.chunk.js": "/DividendCalendarWeb/static/js/2.fc62ac52.chunk.js",
-    "static/js/2.fc62ac52.chunk.js.map": "/DividendCalendarWeb/static/js/2.fc62ac52.chunk.js.map",
+    "static/js/2.8bee403a.chunk.js": "/DividendCalendarWeb/static/js/2.8bee403a.chunk.js",
+    "static/js/2.8bee403a.chunk.js.map": "/DividendCalendarWeb/static/js/2.8bee403a.chunk.js.map",
     "index.html": "/DividendCalendarWeb/index.html",
     "static/css/main.9c4fd8a2.chunk.css.map": "/DividendCalendarWeb/static/css/main.9c4fd8a2.chunk.css.map",
-    "static/js/2.fc62ac52.chunk.js.LICENSE.txt": "/DividendCalendarWeb/static/js/2.fc62ac52.chunk.js.LICENSE.txt",
+    "static/js/2.8bee403a.chunk.js.LICENSE.txt": "/DividendCalendarWeb/static/js/2.8bee403a.chunk.js.LICENSE.txt",
     "static/media/icon_app.63b0a04b.png": "/DividendCalendarWeb/static/media/icon_app.63b0a04b.png",
     "static/media/icon_user_gray.10b519b5.svg": "/DividendCalendarWeb/static/media/icon_user_gray.10b519b5.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.2ba1f74f.js",
-    "static/js/2.fc62ac52.chunk.js",
+    "static/js/2.8bee403a.chunk.js",
     "static/css/main.9c4fd8a2.chunk.css",
-    "static/js/main.3afc0b48.chunk.js"
+    "static/js/main.76099d08.chunk.js"
   ]
 }
