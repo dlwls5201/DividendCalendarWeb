@@ -8,34 +8,21 @@ import StockAnalysisWithUser from 'components/StockAnalysisWithUser'
 
 const UserDetailHistory = () => {
   const location = useLocation()
+  const userId = location.state.uid
+  const userName = location.state.name
 
   const [historyList, setHistoryList] = useState([])
-  const [userId, setUserId] = useState('')
-  const [userName, setUserName] = useState('')
-
-  const [isShowError, setIsShowError] = useState(false)
 
   useEffect(async () => {
-    try {
-      const stateUserid = location.state.uid
-      const stateUserName = location.state.name
-      setUserId(stateUserid)
-      setUserName(stateUserName)
-
-      const historyRef = collection(firestore, 'history')
-      //const historyQuery = query(historyRef, where('userId', '==', userId, limit(100)))
-      const historyQuery = query(historyRef, where('userId', '==', stateUserid))
-      const historySnapshot = await getDocs(historyQuery)
-      const histories = historySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data()
-      }))
-      setHistoryListOrderByCreatedAtDESC(histories)
-      setIsShowError(false)
-    } catch (e) {
-      setIsShowError(true)
-      console.log(e)
-    }
+    const historyRef = collection(firestore, 'history')
+    //const historyQuery = query(historyRef, where('userId', '==', userId, limit(100)))
+    const historyQuery = query(historyRef, where('userId', '==', userId))
+    const historySnapshot = await getDocs(historyQuery)
+    const histories = historySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+    setHistoryListOrderByCreatedAtDESC(histories)
   }, [])
 
   const setHistoryListOrderByCreatedAtDESC = (histories) => {
@@ -68,10 +55,6 @@ const UserDetailHistory = () => {
   }
 
   return (
-    isShowError ?
-    <div>
-      잘못된 경로 입니다.
-    </div> :
     <div
       className={ 'px-5 py-5 text-lg' }
       style={ {display: 'flex', flexDirection: 'column'} }
