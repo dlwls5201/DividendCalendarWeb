@@ -14,6 +14,8 @@ const StockRanking = ({userObj}) => {
   const [isCachingData, setIsCachingData] = useState('')
 
   const [isShowError, setIsShowError] = useState(false)
+  const [totalStockTicker, setTotalStockTicker] = useState(0)
+  const [totalStockCount, setTotalStockCount] = useState(0.0)
 
   useEffect(() => {
     if (checkAdmin(userObj.email)) {
@@ -45,7 +47,6 @@ const StockRanking = ({userObj}) => {
     }))
 
     processingData(stocks)
-
     localStorage.setItem('stocks', JSON.stringify(stocks))
 
     const currentTime = Date.now()
@@ -53,7 +54,10 @@ const StockRanking = ({userObj}) => {
   }
 
   const processingData = (stocks) => {
+    let totalStockCount = 0.0
+
     const tempMap = new Map()
+
     stocks.forEach(stock => {
       let item = tempMap.get(stock.symbol)
       if (item) {
@@ -69,10 +73,15 @@ const StockRanking = ({userObj}) => {
         }
       }
       tempMap.set(stock.symbol, item)
+      totalStockCount += parseFloat(stock.count)
     })
 
     const tempList = []
     tempMap.forEach((value, key) => tempList.push(value))
+
+    setTotalStockTicker(tempMap.size)
+    setTotalStockCount(totalStockCount)
+
     setRankingList(tempList)
   }
 
@@ -126,6 +135,9 @@ const StockRanking = ({userObj}) => {
       <p
         className={ 'mt-8 text-gray-600' }
       >
+        등록된 총 주식 종류 : <b>{ totalStockTicker }</b><br />
+        등록된 총 주식 갯수 : <b>{ totalStockCount }</b><br />
+        [테이블 설명] <br />
         모든 유저의 주식 총 갯수 : <b>Count</b> <br />
         해당 주식을 추가한 모든 유저들의 수 : <b>UserNumber</b>
       </p>
